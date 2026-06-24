@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Pupuk Cabai Merah Akurat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <header class="bg-emerald-600 text-white py-4 px-4 shadow-md text-center">
+        <h1 class="text-xl font-bold tracking-wide">🌱 TaniSolusi</h1>
+        <p class="text-xs opacity-90">Kalkulator Dosis Pupuk Cabai Merah Instan</p>
+    </header>
+
+    <main class="max-w-md mx-auto w-full p-4 flex-grow">
+        <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+            <h2 class="text-lg font-bold text-center text-emerald-700 mb-4">Hitung Kebutuhan Pupuk Anda</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1" for="jumlahPohon">
+                        Jumlah Pohon Cabai Merah:
+                    </label>
+                    <input type="text" inputmode="numeric" id="jumlahPohon" placeholder="Contoh: 1.000" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none transition text-lg">
+                    <p id="pesanError" class="hidden text-sm text-red-500 mt-2 font-medium">
+                        ⚠️ Masukkan jumlah pohon yang valid (minimal 1), Bang!
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">
+                        Fase Pertumbuhan:
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 transition" id="labelVeg">
+                            <input type="radio" name="fase" value="vegetatif" checked class="hidden" id="radioVeg">
+                            <span class="text-sm font-semibold text-emerald-600">Fase Vegetatif</span>
+                            <span class="text-xs text-gray-400">(Umur 1-4 Minggu)</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50 transition" id="labelGen">
+                            <input type="radio" name="fase" value="generatif" class="hidden" id="radioGen">
+                            <span class="text-sm font-semibold text-amber-600">Fase Generatif</span>
+                            <span class="text-xs text-gray-400">(Umur 5 Minggu+)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="hitungPupuk()" 
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition transform active:scale-95 text-center block mt-2">
+                    🚀 Hitung Solusi Sekarang
+                </button>
+            </div>
+
+            <div id="hasilSeksi" class="hidden mt-6 pt-6 border-t border-gray-100 space-y-4">
+                <h3 class="text-md font-bold text-gray-700">📋 Hasil Rekomendasi Pupuk:</h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                        <span class="block text-xs font-semibold text-emerald-700 uppercase" id="namaPupuk1">Pupuk NPK</span>
+                        <span class="block text-xl font-black text-emerald-900 mt-1" id="beratPupuk1">0 kg</span>
+                        <span class="block text-[10px] text-gray-500 mt-1" id="karungPupuk1">~ 0 Karung (50kg)</span>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-4 text-center">
+                        <span class="block text-xs font-semibold text-amber-700 uppercase" id="namaPupuk2">Pupuk Urea</span>
+                        <span class="block text-xl font-black text-amber-900 mt-1" id="beratPupuk2">0 kg</span>
+                        <span class="block text-[10px] text-gray-500 mt-1" id="karungPupuk2">~ 0 Karung (50kg)</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-xl">
+                    <span class="text-xs font-bold text-blue-800 block">💡 Tips Aplikasi Lapangan:</span>
+                    <p class="text-xs text-blue-900 mt-0.5" id="tipsPertanian"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-3 text-center text-xs">
+        <p>&copy; 2026 TaniSolusi. Semua Hak Dilindungi.</p>
+        <p class="text-[10px] text-gray-500 mt-0.5">Dosis berdasarkan standar umum pemupukan cabai merah lokal.</p>
+    </footer>
+
+    <script>
+        const radioVeg = document.getElementById('radioVeg');
+        const radioGen = document.getElementById('radioGen');
+        const labelVeg = document.getElementById('labelVeg');
+        const labelGen = document.getElementById('labelGen');
+        const inputPohon = document.getElementById('jumlahPohon');
+
+        // Set style awal pas pertama dimuat
+        if(labelVeg) labelVeg.classList.add('border-emerald-500', 'bg-emerald-50');
+
+        function updateRadioStyle() {
+            if (radioVeg.checked) {
+                labelVeg.classList.add('border-emerald-500', 'bg-emerald-50');
+                labelGen.classList.remove('border-amber-500', 'bg-amber-50');
+            } else {
+                labelGen.classList.add('border-amber-500', 'bg-amber-50');
+                labelVeg.classList.remove('border-emerald-500', 'bg-emerald-50');
+            }
+        }
+        radioVeg.addEventListener('change', updateRadioStyle);
+        radioGen.addEventListener('change', updateRadioStyle);
+
+        // Fitur Format Angka Ribuan Secara Real-time
+        inputPohon.addEventListener('input', function(e) {
+            // Hapus semua karakter selain angka
+            let value = this.value.replace(/[^0-9]/g, '');
+            // Format ulang dengan titik gaya Indonesia
+            if (value !== '') {
+                this.value = parseInt(value, 10).toLocaleString('id-ID');
+            } else {
+                this.value = '';
+            }
+        });
+
+        function hitungPupuk() {
+            const rawValue = inputPohon.value;
+            // Bersihkan titik sebelum melakukan operasi matematika
+            const cleanValue = rawValue.replace(/\./g, '');
+            const jumlahPohon = parseFloat(cleanValue);
+            
+            const fase = document.querySelector('input[name="fase"]:checked').value;
+            const hasilSeksi = document.getElementById('hasilSeksi');
+            const pesanError = document.getElementById('pesanError');
+
+            // Validasi: Cek jika kosong, bukan angka, atau kurang dari 1
+            if (!cleanValue || isNaN(jumlahPohon) || jumlahPohon < 1) {
+                pesanError.classList.remove('hidden'); // Munculkan error
+                hasilSeksi.classList.add('hidden'); // Sembunyikan hasil perhitungan (jika sebelumnya ada)
+                return;
+            } else {
+                pesanError.classList.add('hidden'); // Sembunyikan error jika sudah valid
+            }
+
+            let p1Nama, p2Nama, p1Berat, p2Berat, tips;
+
+            if (fase === 'vegetatif') {
+                p1Nama = "NPK Seimbang";
+                p2Nama = "Pupuk Urea / ZA";
+                p1Berat = (jumlahPohon * 2) / 1000; 
+                p2Berat = (jumlahPohon * 1) / 1000; 
+                tips = "Lakukan pemupukan dengan sistem kocor (larutkan dalam air) di pagi hari sekitar jam 06.00 - 09.00 untuk penyerapan batang dan daun yang maksimal.";
+            } else {
+                p1Nama = "NPK Grower";
+                p2Nama = "Pupuk KCl";
+                p1Berat = (jumlahPohon * 4) / 1000; 
+                p2Berat = (jumlahPohon * 2) / 1000; 
+                tips = "Fase ini krusial untuk bobot buah! Aplikasikan secara tugal/tabur dengan jarak 10-15 cm dari pangkal batang agar akar tidak terbakar, lalu pastikan tanah cukup lembap.";
+            }
+
+            // Tampilkan Data ke UI
+            document.getElementById('namaPupuk1').innerText = p1Nama;
+            document.getElementById('namaPupuk2').innerText = p2Nama;
+            
+            // Konversi format hasil agar menggunakan koma sebagai desimal (standar Indonesia)
+            document.getElementById('beratPupuk1').innerText = p1Berat.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " Kg";
+            document.getElementById('beratPupuk2').innerText = p2Berat.toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " Kg";
+
+            document.getElementById('karungPupuk1').innerText = `~ ${(p1Berat / 50).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Karung (50kg)`;
+            document.getElementById('karungPupuk2').innerText = `~ ${(p2Berat / 50).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Karung (50kg)`;
+
+            document.getElementById('tipsPertanian').innerText = tips;
+
+            hasilSeksi.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
